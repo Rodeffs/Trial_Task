@@ -165,7 +165,7 @@ def next_takings(user_id: int, con: sqlite3.Connection = Depends(get_db)):
             hour_str, minute_str = stamp.split(':')
             stamp_minute = int(hour_str) * 60 + int(minute_str)
 
-            if 0 < stamp_minute - minutes_now <= closest_next_taking:
+            if 0 <= stamp_minute - minutes_now <= closest_next_taking:
                 next_pills.append((stamp, pill_name))
 
     except Exception as e:
