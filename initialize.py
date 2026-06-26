@@ -32,13 +32,12 @@ con.commit()
 
 
 # Таблица расписаний
-# Предполагается, что длительность курса лечения измеряется в днях. Если количество дней равно 0, то тогда полагается, что таблетку нужно принимать всегда
 
 cur.execute("""
     CREATE TABLE IF NOT EXISTS schedule(
         schedule_id INTEGER PRIMARY KEY,
         pill_name TEXT NOT NULL,
-        duration_days INTEGER NOT NULL,
+        duration_days INTEGER,
         user_id INTEGER,
         FOREIGN KEY(user_id) REFERENCES user(user_id)
     )
