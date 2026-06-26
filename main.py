@@ -107,10 +107,12 @@ def get_schedules(user_id: int, con: sqlite3.Connection = Depends(get_db)):
             WHERE user_id={user_id}
         """).fetchall()
 
+        data = [row[0] for row in data]
+
     except Exception as e:
         return {"message": str(e)}
 
-    return {"message": "Success!", "data": data}
+    return {"message": "Success!", "schedules_id": data}
 
 
 @app.get("/schedule")
@@ -118,11 +120,13 @@ def get_schedule(schedule_id: int, con: sqlite3.Connection = Depends(get_db)):
     cur = con.cursor()
 
     try:
-        pill = cur.execute(f"""
+        data = cur.execute(f"""
             SELECT pill_name, duration_days
             FROM schedule
             WHERE schedule_id={schedule_id}
         """).fetchone()
+
+        pill_info = {"pill_name": data[0], "duration_days": data[1]}
 
         time_period = cur.execute(f"""
             SELECT time_stamp
@@ -131,10 +135,12 @@ def get_schedule(schedule_id: int, con: sqlite3.Connection = Depends(get_db)):
             ORDER BY time_stamp
         """).fetchall()
 
+        time_period = [row[0] for row in time_period]
+
     except Exception as e:
         return {"message": str(e)}
 
-    return {"message": "Success!", "pill": pill, "time_period": time_period}
+    return {"message": "Success!", "pill_info": pill_info, "time_period": time_period}
 
 
 @app.get("/next_takings")
@@ -160,7 +166,7 @@ def next_takings(user_id: int, con: sqlite3.Connection = Depends(get_db)):
             stamp_minute = int(hour_str) * 60 + int(minute_str)
 
             if 0 < stamp_minute - minutes_now <= closest_next_taking:
-                next_pills.append((pill_name, stamp))
+                next_pills.append((stamp, pill_name))
 
     except Exception as e:
         return {"message": str(e)}
